@@ -1,5 +1,6 @@
-#' Calculate p-value of HC by ultra-fast interpolation method
+#' Calculate p-value of HC by ultra-fast interpolation (UFI) method
 #'
+#' @description This method is recommended when K is no larger than 2000, for HC of full supremum domain (FHC), HC of half truncated supremum domain (THC), HC of thresholding supremum domain (MHC) or HC of thresholding and half truncated supremum domain (TMHC)
 #' @param flibs choose the spline function data set of one specific variation of HC form HC_flibs, THC_flibs, MHC_flibs or TMHC_flibs, and the default is HC_flibs.
 #' @param K a vector of HC dimensions i.e. the total number of studies
 #' @param q a vector of quantiles or observed values of HC statistic

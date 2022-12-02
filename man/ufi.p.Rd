@@ -2,7 +2,7 @@
 % Please edit documentation in R/UFIp.R
 \name{ufi.p}
 \alias{ufi.p}
-\title{Calculate p-value of HC by ultra-fast interpolation method}
+\title{Calculate p-value of HC by ultra-fast interpolation (UFI) method}
 \usage{
 ufi.p(flibs = HC_flibs, K, q)
 }
@@ -17,7 +17,7 @@ ufi.p(flibs = HC_flibs, K, q)
 a vector of p-values corresponding to the input HC statistics
 }
 \description{
-Calculate p-value of HC by ultra-fast interpolation method
+This method is recommended when K is no larger than 2000, for HC of full supremum domain (FHC), HC of half truncated supremum domain (THC), HC of thresholding supremum domain (MHC) or HC of thresholding and half truncated supremum domain (TMHC)
 }
 \examples{
 q=sapply(10:15,function(i) {

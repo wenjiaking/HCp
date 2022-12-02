@@ -2,7 +2,7 @@
 % Please edit documentation in R/UFIq.R
 \name{ufi.q}
 \alias{ufi.q}
-\title{Calculate threshold of HC by ultra-fast interpolation method}
+\title{Calculate threshold of HC by ultra-fast interpolation (UFI) method}
 \usage{
 ufi.q(flibs_q = HC_flibs_q, K, p)
 }
@@ -17,7 +17,7 @@ ufi.q(flibs_q = HC_flibs_q, K, p)
 a vector of thresholds of HC tests corresponding to the input significance levels
 }
 \description{
-Calculate threshold of HC by ultra-fast interpolation method
+This method is recommended when K is no larger than 2000, for HC of full supremum domain (FHC), HC of half truncated supremum domain (THC), HC of thresholding supremum domain (MHC) or HC of thresholding and half truncated supremum domain (TMHC)
 }
 \examples{
 ufi.q(flibs_q=HC_flibs_q,K=10:15,p=10^(seq(-3,-8)))

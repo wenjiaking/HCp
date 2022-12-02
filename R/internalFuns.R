@@ -295,4 +295,21 @@ PM_updateindep <-
     return(PM)
   }
 
+#######Naive Monte Carlo###############
+MC.est=function(K,N1=10^4,B=10^3,k0=1,k1=NA,thre,q) {
+  k0=floor(k0)
+  if(is.na(k1)){
+    k1 = K
+  }else{
+    k1 = floor(k1)
+  }
+  stat.vals=lapply(1:B,function(b) {
+    x=matrix(stats::rnorm(K*N1,0,1),nrow = N1)
+    stat.val=HC.stat(x=x,k0=k0,k1=k1,thre=thre)
+    return(stat.val)
+  })
+  stat.vals=unlist(stat.vals)
+  p=mean(stat.vals>=q)
+  return(p)
+}
 

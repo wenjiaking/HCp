@@ -1,5 +1,6 @@
-#' Calculate threshold of HC by ultra-fast interpolation method
+#' Calculate threshold of HC by ultra-fast interpolation (UFI) method
 #'
+#' @description This method is recommended when K is no larger than 2000, for HC of full supremum domain (FHC), HC of half truncated supremum domain (THC), HC of thresholding supremum domain (MHC) or HC of thresholding and half truncated supremum domain (TMHC)
 #' @param flibs_q choose the spline function data set of one specific variation of HC form HC_flibs_q, THC_flibs_q, MHC_flibs_q or TMHC_flibs_q, and the default is HC_flibs_q.
 #' @param K a vector of HC dimensions i.e. the total number of studies
 #' @param p a vector of signifiance level for each of the test
