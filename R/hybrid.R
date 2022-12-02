@@ -1,5 +1,5 @@
-#' Hybrid method of computing p-value for HC
-#' @description The function is recommended for HC of arbitrary variation or for FHC, THC, MHC, TMHC of K>2000 that beyond the scope of the ultra fast interpolation (UFI) method
+#' Hybrid method of computing p-value for HC of arbitrary variation
+#' @description The function is recommended for HC of arbitrary variation except for FHC, THC, MHC, TMHC
 #' @param q quantile or observed value of HC statistic, should be a scalar
 #' @param K dimension of HC, i.e. the total number of studies
 #' @param k0 search range starts from the k0th smallest p-value, default value is 1.
@@ -11,9 +11,9 @@
 #' @export
 #'
 #' @examples
-#' pset=runif(2001)
-#' hcstat <-HCstat(pset,k0=1,k1=NA, thre=FALSE)
-#' hybrid(q=hcstat, K=2001, k0=1,k1=NA, thre=FALSE,N=10^6)
+#' pset=runif(200)
+#' hcstat <-HCstat(pset,k0=1,k1=80, thre=FALSE)
+#' hybrid(q=hcstat, K=200, k0=1,k1=80, thre=FALSE,N=10^6)
 
 hybrid=function(q,K, k0=1, k1=NA, thre=FALSE,N=10^6) {
   if (!thre) {

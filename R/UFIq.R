@@ -27,7 +27,7 @@ ufi.q=function(flibs_q=HC_flibs_q,K,p) {
     }
   }
   else {
-    stop("Please input the pre-calcuated data set of spline functions: HC_flibs_q, THC_flibs_q, MHC_flibs_q or TMHC_flibs_q.")
+    stop("Please input the pre-calcuated data set of spline functions: flibs_q=HC_flibs_q, THC_flibs_q, MHC_flibs_q or TMHC_flibs_q.")
   }
 
   qs=sapply(1:length(p), function(i){

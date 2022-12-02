@@ -2,7 +2,7 @@
 % Please edit documentation in R/hybrid.R
 \name{hybrid}
 \alias{hybrid}
-\title{Hybrid method of computing p-value for HC}
+\title{Hybrid method of computing p-value for HC of arbitrary variation}
 \usage{
 hybrid(q, K, k0 = 1, k1 = NA, thre = FALSE, N = 10^6)
 }
@@ -23,10 +23,10 @@ hybrid(q, K, k0 = 1, k1 = NA, thre = FALSE, N = 10^6)
 The right-tail probability of the null distribution of HC statistic at the given quantile, i.e. p-value.
 }
 \description{
-The function is recommended for HC of arbitrary variation or for FHC, THC, MHC, TMHC of K>2000 that beyond the scope of the ultra fast interpolation (UFI) method
+The function is recommended for HC of arbitrary variation except for FHC, THC, MHC, TMHC
 }
 \examples{
-pset=runif(2001)
-hcstat <-HCstat(pset,k0=1,k1=NA, thre=FALSE)
-hybrid(q=hcstat, K=2001, k0=1,k1=NA, thre=FALSE,N=10^6)
+pset=runif(200)
+hcstat <-HCstat(pset,k0=1,k1=80, thre=FALSE)
+hybrid(q=hcstat, K=200, k0=1,k1=80, thre=FALSE,N=10^6)
 }
