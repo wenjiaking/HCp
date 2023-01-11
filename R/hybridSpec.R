@@ -17,7 +17,7 @@ hybridSpec=function(q,K,flibs=HC_flibs, N=10^6) {
   HCtype=deparse(substitute(flibs))
   if (HCtype %in% c("HC_flibs","THC_flibs","MHC_flibs","TMHC_flibs")) {
     if (HCtype=="HC_flibs") {
-      if (K>2000) {
+      if (K>1000) {
         return(mst(q=q, K=K, k0=1, k1=K, thre=FALSE))
       }
       else {
@@ -26,7 +26,7 @@ hybridSpec=function(q,K,flibs=HC_flibs, N=10^6) {
       }
     }
     if (HCtype=="THC_flibs") {
-      if (K>2000) {
+      if (K>1000) {
         return(mst(q=q, K=K, k0=1, k1=floor(K/2), thre=FALSE))
       }
       else {
@@ -35,7 +35,7 @@ hybridSpec=function(q,K,flibs=HC_flibs, N=10^6) {
       }
     }
     if (HCtype=="MHC_flibs") {
-      if (K>2000 | K<20) {
+      if (K>1000 | K<20) {
         return(hybrid(q=q,K=K, k0=1, k1=K, thre=TRUE,N=10^6))
       }
       else {
@@ -44,7 +44,7 @@ hybridSpec=function(q,K,flibs=HC_flibs, N=10^6) {
       }
     }
     if (HCtype=="TMHC_flibs") {
-      if (K>2000 | K<30) {
+      if (K>1000 | K<30) {
         return(hybrid(q=q,K=K, k0=1, k1=floor(K/2), thre=TRUE,N=10^6))
       }
       else {
