@@ -1,6 +1,6 @@
 # HCp R package
 
-The R package "HCp" including functions of different methods for p-value computation of Higher Criticism test.
+The R package "HCp" including functions of different methods for p-value computation of Higher Criticism test. The source code is under "master" branch.
 
 ## Install the pacakge
 
