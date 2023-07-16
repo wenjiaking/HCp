@@ -44,7 +44,7 @@ pphi.mod <- function(q, M, k0, k1, s=2, t=30, onesided=FALSE,MHC=FALSE)
   tbl = table(rho) #for independent studies, all rho should be 0
   rho_unique = as.numeric(names(tbl)) # unique rho
   rho_freq = as.numeric(tbl) # frequency of unique rho
-  
+
   nrep_uniq = length(rho_unique) #for independent studies, the length should be 1
   pvalue_cal = c()
   for(i in 1:nrep_uniq){
@@ -186,7 +186,7 @@ UnifCross_v1.mod <- function(u, um, t, n, k0, k1){
   if(t>1){
     for (i in 2:(t-1)){
       d = dpois(c(1:(i-1), i+k0-1),u[i+k0-1])*exp(u[i+k0-1])
-      
+
       a[i+1]=-a[i:1]%*%d
     }
     a_pos=which(a[2:t]>0)+1
@@ -201,7 +201,7 @@ UnifCross_v1.mod <- function(u, um, t, n, k0, k1){
 
 
 UnifCross_v1_MHC <- function(u, um, n, t,k0, k1){
-  alpha=1/n 
+  alpha=1/n
   m = floor(k1)
   u=sapply(u,function(x) max(x,alpha))
   um=max(um,alpha)
@@ -214,12 +214,12 @@ UnifCross_v1_MHC <- function(u, um, n, t,k0, k1){
     for (i in 2:(t-1)){
       d = mpfr(c((-dpois(1:(i-1),u[i+k0-1])*exp(u[i+k0-1])),
             (alpha^(i+k0-1)-pbinom(k0-1,i+k0-1,alpha/u[i+k0-1])*u[i+k0-1]^(i+k0-1))/factorial(i+k0-1)),80)
-      
+
       a[i+1]=a[i:1]%*%d
     }
-   
+
     return(asNumeric(drop(pp[1:t]%*%a[1:t])))
-    
+
   }else{
     p = pbeta(u[k0], k0, n-k0+1)
     return(1-drop(p))
@@ -234,7 +234,7 @@ PM_updateindep <-
         PM[a_k+1,ind] = PM[a_k+1,ind] + dbinom(a_k,a_k1,tailprob[ind]/tailprob[ind-1])*PM[a_k1+1,ind-1]
       }
     }
-    PM[1:(cv[ind]+1),ind] = PM[1:(cv[ind]+1),ind]/denom  
+    PM[1:(cv[ind]+1),ind] = PM[1:(cv[ind]+1),ind]/denom
     return(PM)
   }
 
@@ -277,23 +277,23 @@ CE.HC.mixed.grad=function(K,theta,N1=1000,k0,k1,thre,idx=1) {
   x=matrix(rnorm(K*N1,0,theta),nrow = N1)^{(mix.prop)}+matrix(rnorm(K*N1),nrow = N1)^{1-(mix.prop)}-1
   stat.val=HC.stat(x=x,k0=k0,k1=k1,thre=thre)
   log_g_norm <- rowsums(log(dnorm(x))) # numerator part
-  
+
   log_g_mix <- rowsums(log(transpose(transpose(dnorm(x,0,theta))*grad)+transpose(transpose(dnorm(x))*(1-grad))))
-  
+
   w=exp(log_g_norm-log_g_mix)
   #s=rowsums(x[,grad==1]^2)
   return(list(stat.val=stat.val,weight=w,x=x))
 }
 
 mixed.par.update.grad=function(object,ro,K,idx=1) {
-  
+
   stat.val=object[[1]]
   gamma=quantile(stat.val,1-ro)
   weight=object[[2]]
   x.mat=transpose(object[[3]])
   B=length(stat.val)
   grad=1/((1:K)^idx+1)
-  
+
   opt=optimize(function(t) 1/B*sum(weight[stat.val>=gamma]*apply(x.mat[,stat.val>=gamma],2,function(x) sum(log(grad*dnorm(x,0,t)+(1-grad)*dnorm(x,0,1))))),
                interval = c(0,5),maximum = TRUE)
   par=opt$maximum
@@ -301,7 +301,7 @@ mixed.par.update.grad=function(object,ro,K,idx=1) {
 }
 
 CE.mixed.grad=function(K,ro,N0=10^4, N1=10^4,B=10^3,q,k0,k1,thre,idx=1,theta=1) {
-  
+
   gamma=-Inf
   t=0
   while (gamma<q) {
@@ -313,7 +313,7 @@ CE.mixed.grad=function(K,ro,N0=10^4, N1=10^4,B=10^3,q,k0,k1,thre,idx=1,theta=1) 
     print(paste0(gamma,", ",theta))
   }
   print("stop")
-  
+
   objs=lapply(1:B,function(b) CE.HC.mixed.grad(K=K,theta=theta,N1=N1,k0=k0,k1=k1,thre=thre,idx=idx))
   stat.val.final=as.vector(sapply(objs,"[[",1))
   weight.final=as.vector(sapply(objs,"[[",2))
@@ -333,24 +333,24 @@ CE.HC.mixed.prop=function(K,theta,N1=1000,k0,k1,thre,prop=0.2) {
   if (prop==-Inf) {grad=rep(1,K)}
   else {grad=c(rep(0,ceiling(K^(prop))),rep(1,floor(K-K^(prop))))}
   #else {grad=c(rep(0,ceiling(K^(prop))),rep(1,floor(K-K^(prop))))}
-  
+
   #grad=1/((1:K)^(0.1)+1)
   mix.prop=matrix(rbinom(K*N1,size=1,prob=grad),nrow=K)
   mix.prop=transpose(mix.prop)
-  
+
   x=matrix(rnorm(K*N1,0,theta),nrow = N1)^{(mix.prop)}+matrix(rnorm(K*N1),nrow = N1)^{1-(mix.prop)}-1
   stat.val=HC.stat(x=x,k0=k0,k1=k1,thre=thre)
   log_g_norm <- rowsums(log(dnorm(x))) # numerator part
-  
+
   log_g_mix <- rowsums(log(transpose(transpose(dnorm(x,0,theta))*grad)+transpose(transpose(dnorm(x))*(1-grad))))
-  
+
   w=exp(log_g_norm-log_g_mix)
   #s=rowsums(x[,grad==1]^2)
   return(list(stat.val=stat.val,weight=w,x=x))
 }
 
 mixed.par.update.prop=function(object,ro,K,prop) {
-  
+
   stat.val=object[[1]]
   gamma=quantile(stat.val,1-ro)
   weight=object[[2]]
@@ -358,10 +358,10 @@ mixed.par.update.prop=function(object,ro,K,prop) {
   B=length(stat.val)
   if (prop==-Inf) {grad=rep(1,K)}
   else {grad=c(rep(0,ceiling(K^(prop))),rep(1,floor(K-K^(prop))))}
-  
+
   opt=optimize(function(t) 1/B*sum(weight[stat.val>=gamma]*apply(x.mat[,stat.val>=gamma],2,function(x) sum(log(grad*dnorm(x,0,t)+(1-grad)*dnorm(x,0,1))))),
                interval = c(0,5),maximum = TRUE)
-  
+
   par=opt$maximum
   return(list(gamma=gamma,par=par))
 }
@@ -379,12 +379,12 @@ CE.mixed.prop=function(K,ro,N0=10^4, N1=10^4,B=10^3,q,k0,k1,thre,prop=0.2,theta=
     print(paste0(gamma,", ",theta))
   }
   print("stop")
-  
+
   objs=lapply(1:B,function(b) CE.HC.mixed.prop(K=K,theta=theta,N1=N1,k0=k0,k1=k1,thre=thre,prop = prop))
   stat.val.final=as.vector(sapply(objs,"[[",1))
   weight.final=as.vector(sapply(objs,"[[",2))
   p.val=1/(N1*B)*sum(weight.final[stat.val.final>=q])
-  
+
   #p.val=1/(N1*B)*sum(weight.final[stat.val.final>=q])
   return(p.val)
 }
@@ -424,7 +424,7 @@ MC.est=function(K,N1=10^4,B=10^3,k0,k1,thre,q) {
     return(stat.val)
   })
   stat.vals=unlist(stat.vals)
-  p=mean(stat.vals>=q)
+  p=(sum(stat.vals>=q)+1)/(length(stat.vals)+1)
   return(p)
 }
 
@@ -443,7 +443,7 @@ HCp=function(HC_flibs,K,stats,cores=NULL) {
     } ,mc.cores=cores)
     ps=unlist(ps)
   }
-  
+
   return(ps)
 }
 
@@ -468,7 +468,7 @@ saveRDS(ZY_modtrunc500,"ZY_modtrunc500.rds")
 mixgradlibs_modHC500=lapply(1:15, function(i) libs_HC.CE.mixGrad(q.val.set=exp(seq(log(30),17,length=200)),K=500,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=250, idx=1,thre=FALSE))
 list.save(mixgradlibs_modHC500,"mixgradlibs_modHC500.RData")
 
-######Prepare data for Figure II (C) and (D)############3
+######Prepare data for Figure II (C) and (D)############
 subInd=seq(1,100,length.out = 15)
 mixgrad5libs50_MHC100=mclapply(1:15, function(i) libs_HC.CE.mixprop(q.val.set=seq(log(3),log(13),length=100)[subInd],K=100,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=100, thre=TRUE), mc.cores=30)
 saveRDS(do.call(cbind,mixgrad5libs50_MHC100),"mixgrad5libs50N7_MHC100.rds")
@@ -482,7 +482,7 @@ saveRDS(ZY_MHC100,"ZY_MHC100.rds")
 ZY_TMHC100=sapply(exp(seq(log(3),log(13),length=100)),function(x) 1-phc.mod(q=x,M=diag(1,100),k0=1,k1=50,MHC = TRUE))
 saveRDS(ZY_TMHC100,"ZY_TMHC100.rds")
 
-######Prepare data for Figure III ##############
+######Prepare data for Figure 3 ##############
 mixgradSplib_MHC100=lapply(1:50,function(i) libs_HC.CE.mixprop(q.val.set=c(exp(seq(log(3.8),log(13),length.out = 150))[seq(80,150,length.out = 12)],exp(seq(log(13.5),log(14.5),length.out=3))),K=100,ro=0.01,N0=10^4, N1=10^4,B=10^3,k0=1,k1=100, thre=TRUE))
 saveRDS(do.call(cbind,mixgradSplib_MHC100),"mixgradSplib_MHC100.rds")
 
@@ -500,7 +500,7 @@ LSapproSpTMHC100=sapply(c(exp(seq(log(3.8),log(13),length.out = 150))[seq(80,150
 saveRDS(LSapproSpTMHC100,"LSapproSpTMHC100.rds")
 saveRDS(LSapproSpMHC100,"LSapproSpMHC100.rds")
 
-q_sm=exp(seq(log(0.5),log(3.7),length.out = 50)) 
+q_sm=exp(seq(log(0.5),log(3.7),length.out = 50))
 ZY_SpMHC100=sapply(c(exp(seq(log(3.8),log(13),length.out = 150))[seq(80,150,length.out = 12)],exp(seq(log(13.5),log(14.5),length.out=3))),function(x) 1-phc.mod(x, M=diag(1,nrow = 100), k0=1, k1=100, LS = F, ZW = F, onesided=FALSE,MHC=TRUE))
 ZY_LpMHC100=sapply(c(q_sm[seq(17,42,length.out = 10)],exp(seq(log(3),log(13),length=100)[seq(1,100,length.out = 15)][1:5])), function(x) 1-phc.mod(x, M=diag(1,nrow = 100), k0=1, k1=100, LS = F, ZW = F, onesided=FALSE,MHC=TRUE))
 saveRDS(ZY_SpMHC100,"ZY_SpMHC100.rds")
@@ -511,7 +511,7 @@ mod_LpTMHC100=sapply(c(q_sm[seq(17,42,length.out = 10)],exp(seq(log(3),log(13),l
 saveRDS(mod_SpTMHC100,"mod_SpTMHC100.rds")
 saveRDS(mod_LpTMHC100,"mod_LpTMHC100.rds")
 
-######Prepare data for Figure IV ##############
+######Prepare data for Figure 4 ##############
 set.seed(923)
 Kset=c(30,100,500,1000,2000)
 nset=c(1,10,100,1000,10000,100000)
@@ -542,7 +542,7 @@ libtimes2=function(Kset,HC_flibs, compHC.q,cores=NULL) {
   })
   return(res)
 }
-HC_flibs=list.load("HC_flibs.RData")
+HC_flibs=list.load("data/HC_flibs.RData")
 HCres_libs=libtimes(Kset,HC_flibs,compHC.q,cores=NULL)
 HCres2_libs=libtimes2(Kset2,HC_flibs,compHC.q2,cores=NULL)
 list.save(HCres_libs,"HCres_libs.RData")
@@ -550,7 +550,7 @@ list.save(HCres2_libs,"HCres2_libs.RData")
 
 HCIStimes=function(Kset,compHC.q) {
   res=lapply(compHC.q,function(x) lapply(Kset,function(k) {
-    start.time=Sys.time() 
+    start.time=Sys.time()
     p=lapply(x, function(q) CE.mixed.grad(K=k,ro=0.01,N=10^4,N1=10^4,B=1,q=q,idx=1,k0=1,k1=k,thre=FALSE,theta=1))
     t=Sys.time()-start.time
     return(list(time=t,ps=sapply(p,"[[",1)))
@@ -576,7 +576,7 @@ HCres_IS.lg=lapply(Kset,function(k) {
 })
 list.save(HCres_IS.sub,"HCres_IS.sub.RData")
 list.save(HCres_IS.lg,"HCres_IS.lg.RData")
-HCres2_IS=HCIStimes2(Kset2,compHC.q2) 
+HCres2_IS=HCIStimes2(Kset2,compHC.q2)
 list.save(HCres2_IS,"HCres2_IS.RData")
 
 HCmodtimes=function(Kset,compHC.q) {
@@ -621,7 +621,7 @@ HCLintimes2=function(Kset,compHC.q) {
   return(res)
 }
 
-HCres2_Lin=HCLintimes2(Kset2,compHC.q2) 
+HCres2_Lin=HCLintimes2(Kset2,compHC.q2)
 list.save(HCres2_Lin,"HCres2_Lin.RData")
 
 HCZYtimes=function(Kset,compHC.q) {
@@ -642,7 +642,7 @@ HCZYtimes2=function(Kset,compHC.q) {
   })
   return(res)
 }
-HCres_ZY=HCZYtimes(Kset,compHC.q) 
+HCres_ZY=HCZYtimes(Kset,compHC.q)
 HCres2_ZY=HCZYtimes2(Kset2,compHC.q2)
 list.save(HCres_ZY,"HCres_ZY.RData")
 list.save(HCres2_ZY,"HCres2_ZY.RData")
@@ -665,8 +665,534 @@ HCLStimes2=function(Kset,compHC.q) {
   })
   return(res)
 }
-HCres_LS=HCLStimes(Kset,compHC.q) 
-HCres2_LS=HCLStimes2(Kset2,compHC.q2) 
+HCres_LS=HCLStimes(Kset,compHC.q)
+HCres2_LS=HCLStimes2(Kset2,compHC.q2)
 list.save(HCres_LS,"HCres_LS.RData")
 list.save(HCres2_LS,"HCres2_LS.RData")
+
+######Prepare data for Figure 5 and Supplementary Figure A7##############
+UScovid=read.csv("data/time_series_covid19_confirmed_US.csv",header = F)
+Day=as.Date(as.character(UScovid[1,12:815]),format = "%m/%d/%y")
+UScovid=UScovid[-1,-c(1,2,3,4,5,8)] #3342 counties in total and 59 states, 804 days.
+colnames(UScovid)=c("county","state","Lat","Long","location",as.character(Day))
+saveRDS(UScovid,"UScovid.rds")
+pvalGen=function(counts) {
+  pv=c()
+  for (i in 0:13) {
+    start=i*30+1
+    baseline=counts[start:(start+364)]
+    count=counts[(start+365):(start+394)] # 394=365+29
+    ps=sapply(count, function(x) {
+      return((sum(baseline > x)+1)/(366))
+    })
+    pv=c(pv,ps)
+  }
+  return(pv)
+}
+
+#always use the previous 1 year (365 days) as the base line to calculate the individual p-value of the current set (current 30 days)
+# generate 420 indiviudal p-value for each day from "2021-01-21" to "2022-03-16"
+individualP=t(apply(as.matrix(UScovid[,-c(1:5)]),1,pvalGen)) #dim 3342  420
+##widnow size=30 days, for each county
+HCstats=c()
+for (i in 1:nrow(individualP)) {
+  pSets=matrix(individualP[i,],nrow=30)
+  setHC=apply(pSets, 2, function(x) {
+    P=sort(x,decreasing = F)
+    statHC=max(((1:30)-30*P)/sqrt(30*P*(1-P)))
+    return(statHC)
+  })
+  HCstats=rbind(HCstats,setHC)
+}
+
+HCp=function(HC_flibs,K,stats,cores=NULL) {
+  #HC_flibs=list.load(flibsp_dir)
+  f=HC_flibs[[K-1]]
+  if (is.null(cores)) {
+    ps=sapply(stats, function(x){
+      return(exp(f(log(x))))
+    } )
+  }
+  else {
+    ps=mclapply(stats, function(i){
+      return(exp(f(log(x))))
+    } ,mc.cores=cores)
+    ps=unlist(ps)
+  }
+
+  return(ps)
+}
+
+allHCstatsUS=as.vector(HCstats) #3342*14=46788
+saveRDS(allHCstatsUS,"allHCstatsUS.rds")
+#naIND=which(is.nan(allHCstatsUS))
+start.time=Sys.time()
+HC_flibs=list.load("data/HC_flibs.RData")
+HCpvals=sapply(allHCstatsUS,function(x) HCp(HC_flibs,K=30,x))
+t=Sys.time()-start.time # 0.6591983 secs for 46788 tests
+saveRDS(HCpvals,"US.HCpvals.rds")
+
+start.time=Sys.time()
+XHp=sapply(allHCstatsUS,function(x) XH(GHCstat =x ,P=30))
+t=Sys.time()-start.time #Time difference of 8.824161 mins
+saveRDS(XHp,"US.XHp.rds")
+
+start.time=Sys.time()
+MCp=sapply(allHCstatsUS,function(x) MC.est(K=30,N1=10^4,B=1,k0=1,k1=30,thre=FALSE,q=x))
+t=Sys.time()-start.time #Time difference of 22.2821 mins
+saveRDS(MCp,"US.MCp.rds")
+
+start.time=Sys.time()
+ISp=sapply(allHCstatsUS,function(x) CE.mixed.grad(K=30,ro=0.01,N0=10^4,N1=10^4,B=1,q=x,k0=1,k1=30,thre=FALSE,idx=1,theta=1))
+t=Sys.time()-start.time #Time difference of 4.840439 hours
+saveRDS(ISp,"US.ISp.rds")
+
+start.time=Sys.time()
+MSTp=sapply(allHCstatsUS, function(x) 1-phc.mod(x, M=diag(rep(1,30)), k0=1, k1=30))
+t=Sys.time()-start.time #Time difference of 16.25091 mins
+saveRDS(MSTp,"US.MSTp.rds")
+
+
+
+
+
+
+
+#####Prepare data for Supplementary Figure A5######
+
+q.vals.HC=c(exp(seq(log(1),log(9*10^2),length.out = 200)),exp(seq(log(10^3),log(10^7),length.out = 200)))
+MCLpFHC2000lib=sapply(1:15,function(i) sapply(q.vals.HC[seq(1,100,length.out = 15)], function(x) {
+  print(i)
+  return(MC.est(2000,N1=10^4,B=10^2,k0=1,k1=2000,thre=FALSE,q=x))
+}))
+
+saveRDS(MCLpFHC2000lib,"MCLpFHC2000lib.rds")
+MCLpFHC1000lib=sapply(1:15,function(i) sapply(q.vals.HC[seq(1,100,length.out = 15)], function(x) {
+  print(i)
+  return(MC.est(1000,N1=10^4,B=10^2,k0=1,k1=1000,thre=FALSE,q=x))
+}))
+saveRDS(MCLpFHC1000lib,"MCLpFHC1000lib.rds")
+
+mixgradSplibs_FHC2000=sapply(1:30,function(i) libs_HC.CE.mixGrad(q.vals.HC[seq(110,400,length.out = 25)][1:22],K=2000,ro=0.01,N1=10^4,B=10^3,idx=1,k0=1,k1=2000,thre=FALSE))
+mixgradSplibs_FHC1000=sapply(1:30,function(i) libs_HC.CE.mixGrad(q.vals.HC[seq(110,400,length.out = 25)][1:22],K=1000,ro=0.01,N1=10^4,B=10^3,idx=1,k0=1,k1=1000,thre=FALSE))
+saveRDS(mixgradSplibs_FHC2000,"mixgradSplibs_FHC2000.rds")
+saveRDS(mixgradSplibs_FHC1000,"mixgradSplibs_FHC1000.rds")
+
+LSapproSpFHC1000=sapply(c(q.vals.HC[seq(1,100,length.out = 15)],q.vals.HC[seq(110,400,length.out = 25)][1:22]),function(x) LiAppro_HC(K=1000,b=x,k0=1,k1=1000,thre = FALSE))
+saveRDS(LSapproSpFHC1000,"LSapproSpFHC1000.rds")
+LSapproSpFHC2000=sapply(c(q.vals.HC[seq(1,100,length.out = 15)],q.vals.HC[seq(110,400,length.out = 25)][1:22]),function(x) LiAppro_HC(K=2000,b=x,k0=1,k1=2000,thre = FALSE))
+saveRDS(LSapproSpFHC2000,"LSapproSpFHC2000.rds")
+
+MHCSpevalN107_K300=mclapply(1:30,function(x) libs_HC.CE.mixprop(q.val.set=exp(seq(log(5),log(11),length.out = 15))[1:12],K=300,ro=0.01,N0=10^4, N1=10^4,B=10^3,k0=1,k1=300, thre=TRUE,prop=0.2,theta=1),mc.cores=30)
+MHCSpevalN107_K500=mclapply(1:30,function(x) libs_HC.CE.mixprop(q.val.set=exp(seq(log(5),log(11),length.out = 15))[1:12],K=500,ro=0.01,N0=10^4, N1=10^4,B=10^3,k0=1,k1=500, thre=TRUE,prop=0.2,theta=1),mc.cores=30)
+MHCSpevalN107_K1000=mclapply(1:30,function(x) libs_HC.CE.mixprop(q.val.set=exp(seq(log(5),log(11),length.out = 15))[1:12],K=1000,ro=0.01,N0=10^4, N1=10^4,B=10^3,k0=1,k1=1000, thre=TRUE,prop=0.2,theta=1),mc.cores=30)
+MHCSpevalN107_K2000=mclapply(1:30,function(x) libs_HC.CE.mixprop(q.val.set=exp(seq(log(5),log(11),length.out = 15))[1:12],K=2000,ro=0.01,N0=10^4, N1=10^4,B=10^3,k0=1,k1=2000, thre=TRUE,prop=0.2,theta=1),mc.cores=30)
+
+saveRDS(MHCSpevalN107_K300,"MHCSpevalN107_K300.rds")
+saveRDS(MHCSpevalN107_K500,"MHCSpevalN107_K500.rds")
+saveRDS(MHCSpevalN107_K1000,"MHCSpevalN107_K1000.rds")
+saveRDS(MHCSpevalN107_K2000,"MHCSpevalN107_K2000.rds")
+
+
+MHCLpevalN107.MC_K500=sapply(1:30,function(i) sapply(c(q_sm[seq(17,42,length.out = 10)],exp(seq(log(3),log(13),length=100)[seq(1,100,length.out = 15)][1:5])), function(x) MC.est(K=500,N1=10^4,B=10^3,k0=1,k1=500,thre=TRUE,q=x)))
+MHCLpevalN107.MC_K300=sapply(1:30,function(i) sapply(c(q_sm[seq(17,42,length.out = 10)],exp(seq(log(3),log(13),length=100)[seq(1,100,length.out = 15)][1:5])), function(x) MC.est(K=300,N1=10^4,B=10^3,k0=1,k1=300,thre=TRUE,q=x)))
+MHCLpevalN107.MC_K1000=sapply(1:30,function(i) sapply(c(q_sm[seq(17,42,length.out = 10)],exp(seq(log(3),log(13),length=100)[seq(1,100,length.out = 15)][1:5])), function(x) MC.est(K=1000,N1=10^4,B=10^3,k0=1,k1=1000,thre=TRUE,q=x)))
+MHCLpevalN107.MC_K2000=sapply(1:30,function(i) sapply(c(q_sm[seq(17,42,length.out = 10)],exp(seq(log(3),log(13),length=100)[seq(1,100,length.out = 15)][1:5])), function(x) MC.est(K=2000,N1=10^4,B=10^3,k0=1,k1=2000,thre=TRUE,q=x)))
+
+for (k in c(300,500,1000,2000)) {
+  LSapproMHC.tempK=sapply(c(exp(seq(log(3.8),log(13),length.out = 150))[seq(80,150,length.out = 12)],exp(seq(log(13.5),log(14.5),length.out=3)),exp(seq(log(5),log(11),length.out = 15))),
+                          function(x) LiAppro_HC(K=k,b=x,k0=1,k1=k,thre = TRUE))
+  saveRDS(LSapproMHC.tempK,paste0("LSapproMHC_K",k,".rds"))
+}
+
+
+
+######Prepare data for Supplementary Figure A6##############
+q.vector=q.vals50[seq(1,200,length.out = 5)]
+XHK50.sp=sapply(q.vector,function(x) XH(GHCstat = x,P=50)) #speed 6 screen 2505407
+saveRDS(XHK50.sp,"XHK50.sp.rds")
+XHK500.sp=sapply(q.vector,function(x) XH(GHCstat = x,P=500)) #speed 6 screen 2505407
+saveRDS(XHK500.sp,"XHK500.sp.rds")
+XHK5000.sp=mclapply(q.vector,function(x) XH(GHCstat = x,P=5000),mc.cores = 20) #speed 6 screen 2505407
+saveRDS(unlist(XHK5000.sp),"XHK5000.sp.rds")
+
+XHK50.lp=sapply(seq(10,30,length.out = 5),function(x) XH(GHCstat = x,P=50)) #speed 6 screen 2505407
+saveRDS(XHK50.lp,"XHK50.lp.rds")
+XHK500.lp=mclapply(seq(10,30,length.out = 5),function(x) XH(GHCstat = x,P=500),mc.cores = 20) #speed 4 screen 90814
+saveRDS(XHK500.lp,"XHK500.lp.rds")
+XHK5000.lp=mclapply(seq(10,30,length.out = 5),function(x) XH(GHCstat = x,P=5000),mc.cores = 20) #speed 4 screen 85383
+saveRDS(unlist(XHK5000.lp),"XHK5000.lp.rds")
+
+ISK50=mclapply(1:15, function(i) {sapply(c(1,10,100,1000), function(x) CE.mixed.grad(K=50,ro=0.01,N0=10^3,N1=10^3,B=x,q=25,k0=1,k1=50,thre=FALSE,idx=1,theta=1))},mc.cores=20)
+list.save(ISK50,"ISK50.RData")
+ISK500=mclapply(1:15, function(i) {sapply(c(1,10,100,1000), function(x) CE.mixed.grad(K=500,ro=0.01,N0=10^3,N1=10^3,B=x,q=25,k0=1,k1=500,thre=FALSE,idx=1,theta=1))},mc.cores=20)
+list.save(ISK500,"ISK500.RData")
+ISK5000=mclapply(1:15, function(i) {sapply(c(1,10,100,1000), function(x) CE.mixed.grad(K=5000,ro=0.01,N0=10^3,N1=10^3,B=x,q=25,k0=1,k1=5000,thre=FALSE,idx=1,theta=1))},mc.cores=20)
+list.save(ISK5000,"ISK5000.RData")
+
+ISK50.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=CE.mixed.grad(K=50,ro=0.01,N0=10^3,N1=10^3,B=x,q=25,k0=1,k1=50,thre=FALSE,idx=1,theta=1)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(ISK50.time,"ISK50.time.RData")
+ISK500.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=CE.mixed.grad(K=500,ro=0.01,N0=10^3,N1=10^3,B=x,q=25,k0=1,k1=500,thre=FALSE,idx=1,theta=1)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(ISK500.time,"ISK500.time.RData")
+ISK5000.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=CE.mixed.grad(K=5000,ro=0.01,N0=10^3,N1=10^3,B=x,q=25,k0=1,k1=5000,thre=FALSE,idx=1,theta=1)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(ISK5000.time,"ISK5000.time.RData")
+
+MCK50=lapply(1:15,function(i) sapply(c(1,10,100,1000), function(x) MC.est(K=50,N1=10^3,B=x,k0=1,k1=50,thre=FALSE,q=25)))
+list.save(MCK50,"MCK50.RData")
+MCK500=lapply(1:15,function(i) sapply(c(1,10,100,1000), function(x) MC.est(K=500,N1=10^3,B=x,k0=1,k1=500,thre=FALSE,q=25)))
+list.save(MCK500,"MCK500.RData")
+MCK5000=lapply(1:15,function(i) sapply(c(1,10,100,1000), function(x) MC.est(K=5000,N1=10^3,B=x,k0=1,k1=5000,thre=FALSE,q=25)))
+list.save(MCK5000,"MCK5000.RData")
+MCK50.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=MC.est(K=50,N1=10^3,B=x,k0=1,k1=50,thre=FALSE,q=25)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(MCK50.time,"MCK50.time.RData")
+MCK500.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=MC.est(K=500,N1=10^3,B=x,k0=1,k1=500,thre=FALSE,q=25)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(MCK500.time,"MCK500.time.RData")
+MCK5000.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=MC.est(K=5000,N1=10^3,B=x,k0=1,k1=5000,thre=FALSE,q=25)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(MCK5000.time,"MCK5000.time.RData")
+
+XH.time=lapply(c(50,500,5000),function(x) {
+  start=Sys.time()
+  p=XH(GHCstat =25 ,P=x)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(XH.time,"XH.time.RData")
+XHS.time=lapply(c(50,500,5000),function(x) {
+  start=Sys.time()
+  p=XH(GHCstat =1000 ,P=x)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(XHS.time,"XHS.time.RData")
+
+ISK50S=mclapply(1:15, function(i) {sapply(c(1,10,100,1000), function(x) CE.mixed.grad(K=50,ro=0.01,N0=10^3,N1=10^3,B=x,q=1000,k0=1,k1=50,thre=FALSE,idx=1,theta=1))},mc.cores=20)
+list.save(ISK50S,"ISK50S.RData")
+ISK500S=mclapply(1:15, function(i) {sapply(c(1,10,100,1000), function(x) CE.mixed.grad(K=500,ro=0.01,N0=10^3,N1=10^3,B=x,q=1000,k0=1,k1=500,thre=FALSE,idx=1,theta=1))},mc.cores=20)
+list.save(ISK500S,"ISK500S.RData")
+ISK5000S=mclapply(1:15, function(i) {sapply(c(1,10,100,1000), function(x) CE.mixed.grad(K=5000,ro=0.01,N0=10^3,N1=10^3,B=x,q=1000,k0=1,k1=5000,thre=FALSE,idx=1,theta=1))},mc.cores=20)
+list.save(ISK5000S,"ISK5000S.RData")
+ISK50S.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=CE.mixed.grad(K=50,ro=0.01,N0=10^3,N1=10^3,B=x,q=1000,k0=1,k1=50,thre=FALSE,idx=1,theta=1)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(ISK50S.time,"ISK50S.time.RData")
+ISK500S.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=CE.mixed.grad(K=500,ro=0.01,N0=10^3,N1=10^3,B=x,q=1000,k0=1,k1=500,thre=FALSE,idx=1,theta=1)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(ISK500S.time,"ISK500S.time.RData")
+ISK5000S.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=CE.mixed.grad(K=5000,ro=0.01,N0=10^3,N1=10^3,B=x,q=1000,k0=1,k1=5000,thre=FALSE,idx=1,theta=1)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(ISK5000S.time,"ISK5000S.time.RData")
+
+
+MCK50S=lapply(1:15,function(i) sapply(c(1,10,100,1000), function(x) MC.est(K=50,N1=10^3,B=x,k0=1,k1=50,thre=FALSE,q=1000)))
+list.save(MCK50S,"MCK50S.RData")
+MCK500S=lapply(1:15,function(i) sapply(c(1,10,100,1000), function(x) MC.est(K=500,N1=10^3,B=x,k0=1,k1=500,thre=FALSE,q=1000)))
+list.save(MCK500S,"MCK500S.RData")
+MCK5000S=lapply(1:15,function(i) sapply(c(1,10,100,1000), function(x) MC.est(K=5000,N1=10^3,B=x,k0=1,k1=5000,thre=FALSE,q=1000)))
+list.save(MCK5000S,"MCK5000S.RData")
+MCK50S.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=MC.est(K=50,N1=10^3,B=x,k0=1,k1=50,thre=FALSE,q=1000)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(MCK50S.time,"MCK50S.time.RData")
+MCK500S.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=MC.est(K=500,N1=10^3,B=x,k0=1,k1=500,thre=FALSE,q=1000)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(MCK500S.time,"MCK500S.time.RData")
+MCK5000S.time=lapply(c(1,10,100,1000), function(x) {
+  start=Sys.time()
+  p=MC.est(K=5000,N1=10^3,B=x,k0=1,k1=5000,thre=FALSE,q=1000)
+  end=Sys.time()
+  return(end-start)
+})
+list.save(MCK5000S.time,"MCK5000S.time.RData")
+
+############Prepare Data for Supplement Figure A1################
+HC=function(p.values) {
+  K=length(p.values)
+  sort.p = sort(p.values)
+  GHC.mesh=((1:K)-K*sort.p)/sqrt(K*sort.p*(1-sort.p))
+  GHCstat = max(GHC.mesh)
+  return(stat=GHCstat)
+}
+
+ImportSamp=function(k,lambda,family="Gaussian",mu=1,s=5) {
+  if (family=="Gaussian") {
+    x=sapply(lambda, function(x) rnorm(1,mean = 0,sd=sqrt(x)))
+    p=2*pnorm(abs(x),mean=0,sd=sqrt(mu),lower.tail = FALSE)
+    w=prod(sqrt(lambda))/mu^(k/2)*exp(sum((1/lambda-1/mu)*x^2/2))
+    w.ext=w*x^2
+    stat.val=HC(p.values = p)
+  }
+  if (family=="Beta") {
+    x=sapply(lambda, function(x) rbeta(1,shape1 = x,shape2 = 1))
+    w=1/prod(lambda*x^(lambda-1))
+    w.ext=w*log(x)
+    stat.val=HC(p.values = x)
+  }
+
+  if (family=="Exponential") {
+    x=sapply(lambda, function(x) rexp(1,rate =1/x))
+    w=prod(lambda)/mu^k*exp(sum((1/lambda-1/mu)*x))
+    w.ext=w*x
+    p=pexp(x,rate=1/mu,lower.tail = FALSE)
+    stat.val=HC(p.values = p)
+  }
+
+  if (family=="Weibull") {
+    # the smaller the shape s, the heavier tail of weibull distribution
+    x=sapply(lambda, function(x) rweibull(1,shape = s,scale = x^(1/s)))
+    w=prod(lambda)/mu^(k)*exp(sum((1/lambda-1/mu)*x^s))
+    w.ext=w*x^s
+    p=pweibull(x,shape=s,scale=mu^(1/s),lower.tail = FALSE)
+    stat.val=HC(p.values = p)
+  }
+
+  return(list(stat.val=stat.val,weight=w,weight.ext=w.ext))
+}
+
+
+par.update=function(object,ro, family="Gaussian") {
+  stat.val=sapply(object,"[[",1)
+  gamma=quantile(stat.val,1-ro)
+  weight=sapply(object,"[[",2)
+  weight.ext=sapply(object,"[[",3)
+  if (family=="Gaussian") {
+    lambda.den=apply(weight.ext,1,function(x) sum(x[stat.val>=gamma]))
+    lambda.num=sum(weight[stat.val>=gamma])
+    lambda=-lambda.num/lambda.den
+  }
+  else {
+    lambda.num=apply(weight.ext,1,function(x) sum(x[stat.val>=gamma]))
+    lambda_den=sum(weight[stat.val>=gamma])
+    lambda=lambda.num/lambda_den
+  }
+
+  return(list(gamma=gamma,lambda=lambda))
+}
+
+CE=function(k,ro,N=10^5,q,family="Gaussian",mu=1,s=5) {
+  lambda=rep(mu,k)
+  gamma=-Inf
+  t=0
+  while (gamma<q) {
+    t=t+1
+    obj=mclapply(1:N,function(i) ImportSamp(k=k,lambda=lambda,family=family,mu=mu, s=s),mc.cores = 30)
+    par=par.update(object = obj,ro=ro,family=family)
+    lambda=par$lambda
+    gamma=par$gamma
+    message(paste0(gamma,", ",lambda))
+  }
+  message("stop")
+  obj.final=mclapply(1:N,function(i) ImportSamp(k=k,lambda=lambda,family=family,mu=mu, s=s),mc.cores = 30)
+  stat.val.final=sapply(obj.final, "[[",1)
+  weight.final=sapply(obj.final, "[[",2)
+  p.val=1/N*sum(weight.final[stat.val.final>=q])
+  return(list(p.val=p.val,iter=t,lambda=lambda))
+}
+
+libs_HC.CE=function(q.val.set,ro=0.01,N=10^4,K,family="Gaussian",mu=1,s=5) {
+  temp.lib=lapply(q.val.set, function(x) CE(k=K,ro=ro,N=N,q=x,family=family,mu=mu,s=s))
+  temp.p=sapply(temp.lib,"[[",1)
+  return(temp.p)
+}
+
+#set.seed(1025)
+q.vals50=exp(seq(log(10^3),log(10^7),length.out = 200))
+libs.FHC50.Exp=lapply(1:10,function(x) libs_HC.CE(q.val.set=q.vals50[c(50,80,100,150)],ro=0.01,N=10^4,K=50,family="Exponential"))
+list.save(libs.FHC50.Exp,"libs.FHC50.Exp.RData")
+libs.FHC50.Beta=lapply(1:10,function(x) libs_HC.CE(q.val.set=q.vals50[c(50,80,100,150)],ro=0.01,N=10^4,K=50,family="Beta"))
+list.save(libs.FHC50.Beta,"libs.FHC50.Beta.RData")
+libs.FHC50.Gauss=lapply(1:10,function(x) libs_HC.CE(q.val.set=q.vals50[c(50,80,100,150)],ro=0.01,N=10^4,K=50,family="Gaussian"))
+list.save(libs.FHC50.Gauss,"libs.FHC50.Gauss.RData")
+libs.FHC50.Weibull_s5=lapply(1:10,function(x) libs_HC.CE(q.val.set=q.vals50[c(50,80,100,150)],ro=0.01,N=10^4,K=50,family="Weibull",s=5))
+list.save(libs.FHC50.Weibull_s5,"libs.FHC50.Weibull_s5.RData")
+libs.FHC50.Weibull_s1=lapply(1:10,function(x) libs_HC.CE(q.val.set=q.vals50[c(50,80,100,150)],ro=0.01,N=10^4,K=50,family="Weibull",s=1))
+list.save(libs.FHC50.Weibull_s1,"libs.FHC50.Weibull_s1.RData")
+libs.FHC50.mixGrad=lapply(1:10, function(i) libs_HC.CE.mixGrad(q.val.set=q.vals50[c(50,80,100,150)],K=50,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=50, idx=1,thre=FALSE))
+list.save(libs.FHC50.mixGrad,"libs.FHC50.mixGrad.RData")
+saveRDS(sapply(q.vals50[c(50,80,100,150)],function(x) return(1-phc.mod(x, M=diag(rep(1,50)), k0=1, k1=50))),"FHC50.analyticP.rds")
+
+CE.mixed.grad.mod=function(K,ro,N=10^4,q,idx=1,k0=1,k1,thre=FALSE) {
+  theta=5
+  gamma=-Inf
+  t=0
+  while (gamma<q) {
+    t=t+1
+    obj=CE.HC.mixed.grad(K=K,theta=theta,k0=k0,k1=k1,N1=N,idx=idx,thre=thre)
+    par=mixed.par.update.grad(object = obj,ro=ro,K=K,idx = idx)
+    gamma=par$gamma
+    theta=par$par
+    message(paste0(gamma,", ",theta))
+  }
+  message("stop")
+  obj.final=CE.HC.mixed.grad(K=K,theta=theta,k0=k0,k1=k1,N1=N,idx=idx,thre=thre)
+  stat.val.final=obj.final[[1]]
+  weight.final=obj.final[[2]]
+
+  p.val=1/N*sum(weight.final[stat.val.final>=q])
+  return(list(p.val=p.val,iter=t,theta=theta))
+}
+parsHC.CE.mixGrad=function(q,K=50,ro=0.01,N=1,idx,k0=1,k1,thre=FALSE){
+  temp.lib=lapply(idx, function(x) CE.mixed.grad.mod(K=K,ro=ro,N=N,q=q, idx=x,k0=k0,k1=k1,thre=thre))
+  temp.par=sapply(temp.lib,"[[",3)
+  return(temp.par)
+}
+
+CE.HC.mixgrad.fix=function(q,K,theta,N=1000,idx,k0=1,k1,thre=FALSE) {
+  obj.final=CE.HC.mixed.grad(K=K,theta=theta,k0=k0,k1=k1,N1=N,idx = idx,thre = thre)
+  stat.val.final=obj.final[[1]]
+  weight.final=obj.final[[2]]
+
+  p.val=1/N*sum(weight.final[stat.val.final>=q])
+  print(p.val)
+  return(p.val)
+}
+libs50_HC.CE.fix=function(q,K,theta,N=1,B=50,idx,k0=1,k1,thre=FALSE) {
+
+  temp.p=lapply(1:B, function(b) CE.HC.mixgrad.fix(q=q,K=K,theta=theta,N=N,idx=idx,k0=k0,k1=k1,thre=thre))
+  #temp.p=sapply(temp.lib,"[[",1)
+  return(temp.p)
+}
+
+q.vals50=exp(seq(log(10^3),log(10^7),length.out = 200))
+qvals=exp(seq(log(30),17,length=100))
+idx_thetas=lapply(c(1,10,100),function(N) parsHC.CE.mixGrad(q=q.vals50[100],K=100,ro=0.01,N=N,idx=c(0.3,0.5,1,2),k0=1,k1=100,thre=FALSE))
+idx_thetas_THC=lapply(c(1,10,100),function(N) parsHC.CE.mixGrad(q=qvals[60],K=100,ro=0.01,N=N,idx=c(0.3,0.5,1,2),k0=1,k1=50,thre=FALSE))
+
+idx_vec=c(0.3,0.5,1,2)
+idxHC100N4_fix=lapply(1:4,function(i) libs50_HC.CE.fix(q=q.vals50[100],K=100,theta=idx_thetas[[1]][i],N=10^4,B=50,idx=idx_vec[i],k0=1,k1=100,thre=FALSE))
+idxHC100N5_fix=lapply(1:4,function(i) libs50_HC.CE.fix(q=q.vals50[100],K=100,theta=idx_thetas[[2]][i],N=10^5,B=50,idx=idx_vec[i],k0=1,k1=100,thre=FALSE))
+idxHC100N6_fix=lapply(1:4,function(i) libs50_HC.CE.fix(q=q.vals50[100],K=100,theta=idx_thetas[[3]][i],N=10^6,B=50,idx=idx_vec[i],k0=1,k1=100,thre=FALSE))
+list.save(idxHC100N4_fix,"idxHC100N4_fix.RData")
+list.save(idxHC100N5_fix,"idxHC100N5_fix.RData")
+list.save(idxHC100N6_fix,"idxHC100N6_fix.RData")
+saveRDS((1-phc.mod(q.vals50[100], M=diag(rep(1,100)), k0=1, k1=100)),"idxHC100analy.rds")
+
+idxTHC100N4_fix=lapply(1:4,function(i) libs50_HC.CE.fix(q=qvals[60],K=100,theta=idx_thetas_THC[[1]][i],N=10^4,B=50,idx=idx_vec[i],k0=1,k1=50,thre=FALSE))
+idxTHC100N5_fix=lapply(1:4,function(i) libs50_HC.CE.fix(q=qvals[60],K=100,theta=idx_thetas_THC[[2]][i],N=10^5,B=50,idx=idx_vec[i],k0=1,k1=50,thre=FALSE))
+idxTHC100N6_fix=lapply(1:4,function(i) libs50_HC.CE.fix(q=qvals[60],K=100,theta=idx_thetas_THC[[3]][i],N=10^6,B=50,idx=idx_vec[i],k0=1,k1=50,thre=FALSE))
+list.save(idxTHC100N4_fix,"idxTHC100N4_fix.RData")
+list.save(idxTHC100N5_fix,"idxTHC100N5_fix.RData")
+list.save(idxTHC100N6_fix,"idxTHC100N6_fix.RData")
+saveRDS((1-phc.mod(q.vals50[100], M=diag(rep(1,100)), k0=1, k1=50)),"idxTHC100analy.rds")
+
+
+CE.mixed.Prop.mod=function(K,ro,N=10^4,q,k0,k1,thre,prop=0.2,theta=1) {
+  #theta=1
+  gamma=-Inf
+  t=0
+  while (gamma<q) {
+    t=t+1
+    obj=CE.HC.mixed.prop(K=K,theta=theta,N1=N, k0=k0,k1=k1,thre=thre,prop = prop)
+    par=mixed.par.update.prop(object = obj,ro=ro,K=K,prop = prop)
+    gamma=par$gamma
+    theta=par$par
+    print(paste0(gamma,", ",theta))
+  }
+  print("stop")
+  obj.final=CE.HC.mixed.prop(K=K,theta=theta,N1=N,k0=k0,k1=k1,thre=thre,prop = prop)
+  stat.val.final=obj.final[[1]]
+  weight.final=obj.final[[2]]
+
+  p.val=1/N*sum(weight.final[stat.val.final>=q])
+  return(list(p.val=p.val,iter=t,theta=theta))
+}
+
+CE.MHC.mixed.fix=function(q,K,theta,N1=1000,k0,k1,thre,prop=0.2) {
+  if (prop==-Inf) {grad=rep(1,K)}
+  else {grad=c(rep(0,ceiling(K^(prop))),rep(1,floor(K-K^(prop))))}
+  mix.prop=matrix(rbinom(K*N1,size=1,prob=grad),nrow=K)
+  mix.prop=transpose(mix.prop)
+
+  x=matrix(Rfast::Rnorm(K*N1,0,theta),nrow = N1)^{(mix.prop)}+matrix(Rfast::Rnorm(K*N1),nrow = N1)^{1-(mix.prop)}-1
+  stat.val=HC.stat(x=x,k0=k0,k1=k1,thre=thre)
+  log_g_norm <- rowsums(log(dnorm(x))) # numerator part
+
+  log_g_mix <- rowsums(log(transpose(transpose(dnorm(x,0,theta))*grad)+transpose(transpose(dnorm(x))*(1-grad))))
+
+  w=exp(log_g_norm-log_g_mix)
+  p.val=1/N1*sum(w[stat.val>=q])
+  print(p.val)
+  return(p.val)
+}
+libs50_MHC.CE.fix=function(q,K,theta,N=10^4,k0=1,k1, thre=FALSE,B=50,prop) {
+  temp.p=lapply(1:B, function(b) CE.MHC.mixed.fix(q=q,K=K,theta=theta,N1=N,k0=k0,k1=k1,thre=thre,prop=prop))
+  #temp.p=sapply(temp.lib,"[[",1)
+  return(temp.p)
+}
+
+
+pars_HC.CE.mixProp=function(q,K=50,ro=0.01,N=10^4,k0=1,k1=25, thre=FALSE,prop=0.2,theta=1){
+  #temp.lib=mclapply(q.val.set, function(x) CE.mixed.grad(K=K,ro=ro,N=N,q=x, k0=k0, k1=k1,thre = thre),mc.cores = 30)
+  temp.lib=lapply(prop, function(x) CE.mixed.Prop.mod(K=K,ro=ro,N=N,q=q, k0=k0, k1=k1,thre = thre,prop=x,theta = theta))
+  temp.par=sapply(temp.lib,"[[",3)
+  return(temp.par)
+}
+
+pars_MHC=lapply(c(10^4,10^5,10^6),function(N) pars_HC.CE.mixProp(q=exp(seq(log(3),log(13),length=100))[subInd][14],K=100,ro=0.01,N=N,k0=1,k1=100, thre=TRUE,prop=c(-Inf,0.01,0.1,0.2,0.5)))
+pars_TMHC=lapply(c(10^4,10^5,10^6),function(N) pars_HC.CE.mixProp(q=exp(seq(log(3),log(13),length=100))[subInd][14],K=100,ro=0.01,N=N,k0=1,k1=50, thre=TRUE,prop=c(-Inf,0.01,0.1,0.2,0.5)))
+
+prop_vec=c(-Inf,0.01,0.1,0.2,0.5)
+propMHC100N4_fix=lapply(1:5,function(i) libs50_MHC.CE.fix(q=exp(seq(log(3),log(13),length=100))[subInd][14],theta=pars_MHC[[1]][i],K=100,N=10^4,k0=1,k1=100, thre=TRUE,B=50,prop=prop_vec[i]))
+propMHC100N5_fix=lapply(1:5,function(i) libs50_MHC.CE.fix(q=exp(seq(log(3),log(13),length=100))[subInd][14],theta=pars_MHC[[2]][i],K=100,N=10^5,k0=1,k1=100, thre=TRUE,B=50,prop=prop_vec[i]))
+propMHC100N6_fix=lapply(1:5,function(i) libs50_MHC.CE.fix(q=exp(seq(log(3),log(13),length=100))[subInd][14],theta=pars_MHC[[3]][i],K=100,N=10^6,k0=1,k1=100, thre=TRUE,B=50,prop=prop_vec[i]))
+
+propTMHC100N4_fix=lapply(1:5,function(i) libs50_MHC.CE.fix(q=exp(seq(log(3),log(13),length=100))[subInd][14],theta=pars_TMHC[[1]][i],K=100,N=10^4,k0=1,k1=50, thre=TRUE,B=50,prop=prop_vec[i]))
+propTMHC100N5_fix=lapply(1:5,function(i) libs50_MHC.CE.fix(q=exp(seq(log(3),log(13),length=100))[subInd][14],theta=pars_TMHC[[2]][i],K=100,N=10^5,k0=1,k1=50, thre=TRUE,B=50,prop=prop_vec[i]))
+propTMHC100N6_fix=lapply(1:5,function(i) libs50_HC.CE.fix(q=exp(seq(log(3),log(13),length=100))[subInd][14],theta=pars_TMHC[[3]][i],K=100,N=10^6,k0=1,k1=50, thre=TRUE,B=50,prop=prop_vec[i]))
+
+list.save(propMHC100N4_fix,"propMHC100N4_fix.RData")
+list.save(propMHC100N5_fix,"propMHC100N5_fix.RData")
+list.save(propMHC100N6_fix,"propMHC100N6_fix.RData")
+
+list.save(propTMHC100N4_fix,"propTMHC100N4_fix.RData")
+list.save(propTMHC100N5_fix,"propTMHC100N5_fix.RData")
+list.save(propTMHC100N6_fix,"propTMHC100N6_fix.RData")
+
 
