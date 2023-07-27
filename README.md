@@ -80,4 +80,3 @@ hybridSpec(q=HCstat(pset,k0=1,k1=2001, thre=FALSE), K=2001, flibs=HC_flibs,N=10^
 * Barnett, R. Mukherjee, and X. Lin. The generalized higher criticism for testing SNP-Set effects in genetic association studies. Journal of the American Statistical Association, 112, 06 2016. doi: 10.1080/01621459.2016.1192039.
 * J. Li and D. Siegmund. Higher criticism: p-values and criticism. The Annals of Statistics, 43(3): 1323 – 1350, 2015. doi: 10.1214/15-AOS1312.
 * H. Zhang, J. Jin, and Z. Wu. Distributions and power of optimal signal-detection statistics in finite case. IEEE Transactions on Signal Processing, 68:1021–1033, 2020. doi: 10.1109/TSP. 2020.2967179.
-* 
