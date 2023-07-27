@@ -17,33 +17,36 @@ The package provide functions for implementation of different methods for p-valu
 Example: 
 
 ```
-pset=runif(10)
-hcstat <-HCstat(pset,k0=1,k1=10,thre=F)
-XH(q=hcstat,K=10)
-
-```
-* Li and Siegmund's method: `HCp::LiAppro_HC()` 
-Example: 
-
-```
-mhcstat <-HCstat(pset,k0=1,k1=10,thre=T)
-LiAppro_HC(q=mhcstat,K=10)
+pset=runif(50)
+hcstat <-HCstat(pset,k0=1,k1=length(pset),thre=F)
+XH(q=hcstat,K=50)
 
 ```
 * Modified SetTest method: `HCp::mst()` 
 Example: 
 
 ```
-mst(q=hcstat,K=10,k0=1,k1=10,thre=F)
-mst(q=mhcstat,K=10,k0=1,k1=10,thre=T)
+mhcstat <-HCstat(pset,k0=1,k1=length(pset),thre=T)
+mst(q=hcstat,K=50,k0=1,k1=50,thre=F)
+mst(q=mhcstat,K=50,k0=1,k1=50,thre=T)
 
 ```
 * Cross-entropy-based importance sampling method: `HCp::CE.mixed.grad()` and `HCp::CE.mixed.prop()` 
 Example: 
 
 ```
-CE.mixed.grad(q=hcstat,K=10,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=10,thre=F,idx=1,theta=1)
-CE.mixed.prop(q=mhcstat,K=10,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=10,thre=T,prop=0.2,theta=1)
+CE.mixed.grad(q=hcstat,K=50,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=50,thre=F,idx=1,theta=1)
+CE.mixed.prop(q=mhcstat,K=50,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=50,thre=T,prop=0.2,theta=1)
+
+```
+* Li and Siegmund's method: `HCp::LiAppro_HC()` 
+Example: 
+
+```
+pset=rbeta(100,1,2) #LiAppro_HC only reliable for small p-value computing
+mhcstat <-HCstat(pset,k0=1,k1=length(pset),thre=T)
+LiAppro_HC(q=mhcstat,K=length(pset))
+mst(q=mhcstat,K=length(pset),k0=1,k1=length(pset),thre=T)
 
 ```
 * Untra-fast interpolation method: `HCp::ufi.p()` to calcaulte p-value and `HCp::ufi.q()` to find quantile 
