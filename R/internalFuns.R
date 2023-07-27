@@ -113,7 +113,7 @@ phi.f.inv.i.mod <- function(q, i, n, s){
 
 pphi.rho.mod <- function(threshold, n, rho, k0, k1, NODES=seq(-4,4,length.out=40),
                          s=2, t=30, MHC=FALSE){
-  t = k1-k0+1
+  if(t > (k1-k0+1)) {t = k1-k0+1}
   u = sapply(1:k1,function(x)phi.f.inv.i.mod(threshold, x, n, s))
   um = u[length(u)]
   if(rho!=0){
@@ -309,7 +309,7 @@ MC.est=function(K,N1=10^4,B=10^3,k0=1,k1=NA,thre,q) {
     return(stat.val)
   })
   stat.vals=unlist(stat.vals)
-  p=mean(stat.vals>=q)
+  p=(sum(stat.vals>=q)+1)/(length(stat.vals)+1)
   return(p)
 }
 

@@ -15,6 +15,7 @@
 #'
 HCstat <- function (pset, k0=1, k1=NA,thre=F) {
   K=length(pset)
+  pset=sort(pset,decreasing = F)
   if(is.na(k1)){
     k1 = K
   }else{
