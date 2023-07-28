@@ -33,7 +33,7 @@ LiAppro_HC=function(q,K, k0=1, k1=NA, thre=TRUE) {
   }
   pval=sum(k_coefs*k_Bins)
   if (pval>1 | pval<0) {
-    warning("Li-Siegmund approximation method is only reliable for samll p-value computing (<0.01)!")
+    warning("Li-Siegmund approximation method is only reliable for small p-value computing (<0.01)!")
     return(NA)
   }
   else {
