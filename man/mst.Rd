@@ -24,7 +24,7 @@ The right-tail probability of the null distribution of HC statistic at the given
 Calculate the p-value of Higher Criticism statitic given an observed value
 }
 \examples{
-pset=runif(10)
+pset=runif(50)
 hcstat <-HCstat(pset,k0=1)
-mst(q=hcstat, K=10, k0=1)
+mst(q=hcstat, K=length(pset), k0=1)
 }

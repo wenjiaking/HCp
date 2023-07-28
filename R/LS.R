@@ -10,9 +10,9 @@
 #' @export
 #'
 #' @examples
-#' pset=runif(10)
+#' pset=rbeta(100,1,2)
 #' hcstat <-HCstat(pset,k0=1,thre=TRUE)
-#' LiAppro_HC(q=hcstat, K=10)
+#' LiAppro_HC(q=hcstat, K=length(pset))
 LiAppro_HC=function(q,K, k0=1, k1=NA, thre=TRUE) {
   k0=floor(k0)
   if(is.na(k1)){
@@ -31,5 +31,13 @@ LiAppro_HC=function(q,K, k0=1, k1=NA, thre=TRUE) {
   else {
     k_Bins=stats::dbinom(k_range,K,k_roots)
   }
-  return(sum(k_coefs*k_Bins))
+  pval=sum(k_coefs*k_Bins)
+  if (pval>1 | pval<0) {
+    warning("Li-Siegmund approximation method is only reliable for samll p-value computing (<0.01)!")
+    return(NA)
+  }
+  else {
+    return(pval)
+  }
+
 }

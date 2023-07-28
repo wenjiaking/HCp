@@ -11,9 +11,9 @@
 #' @export
 #'
 #' @examples
-#' pset=runif(10)
+#' pset=runif(50)
 #' hcstat <-HCstat(pset,k0=1)
-#' mst(q=hcstat, K=10, k0=1)
+#' mst(q=hcstat, K=length(pset), k0=1)
 
 mst <- function(q, K, k0=1, k1=NA, thre=FALSE){
   k0=floor(k0)
@@ -22,6 +22,7 @@ mst <- function(q, K, k0=1, k1=NA, thre=FALSE){
   }else{
     k1 = floor(k1)
   }
+  if (thre & K>120) {warning("Only reliable for K<120 if thre=TRUE")}
   return(1-pphi.mod(q=q,K=K, k0=k0, k1=k1, s=2, MHC = thre))
 }
 

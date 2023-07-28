@@ -24,7 +24,7 @@ The right-tail probability of the null distribution of HC statistic at the given
 Calculate p-value of HC by Li-Siegmund approximation
 }
 \examples{
-pset=runif(10)
+pset=rbeta(100,1,2)
 hcstat <-HCstat(pset,k0=1,thre=TRUE)
-LiAppro_HC(q=hcstat, K=10)
+LiAppro_HC(q=hcstat, K=length(pset))
 }

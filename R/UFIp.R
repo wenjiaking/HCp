@@ -35,6 +35,10 @@ ufi.p=function(flibs=HC_flibs,K,q) {
     stop("Please input the pre-calcuated data set of spline functions: flibs=HC_flibs, THC_flibs, MHC_flibs or TMHC_flibs.")
   }
 
+  if (any(K>2000)) {
+    stop("This ultra-fast method is only for K no larger than 2000, otherwise please use function hybridSpec().")
+  }
+
   ps=sapply(1:length(q), function(i){
     f=flist[[i]]
     return(exp(f(log(q[i]))))

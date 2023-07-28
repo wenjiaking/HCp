@@ -30,6 +30,10 @@ ufi.q=function(flibs_q=HC_flibs_q,K,p) {
     stop("Please input the pre-calcuated data set of spline functions: flibs_q=HC_flibs_q, THC_flibs_q, MHC_flibs_q or TMHC_flibs_q.")
   }
 
+  if (any(K>2000)) {
+    stop("This ultra-fast threshold searching method is only for K no larger than 2000.")
+  }
+
   qs=sapply(1:length(p), function(i){
     f=flist_q[[i]]
     return(exp(f(log(p[i]))))
