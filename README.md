@@ -39,7 +39,7 @@ CE.mixed.grad(q=hcstat,K=50,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=50,thre=F,idx=1
 CE.mixed.prop(q=mhcstat,K=50,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=50,thre=T,prop=0.2,theta=1)
 
 ```
-* Li and Siegmund's method: `HCp::LiAppro_HC()` 
+* Li and Siegmund's method: `HCp::LiAppro_HC()` (Li-Siegmund approximation method is only reliable for small p-value computing (< 0.01).)
 Example: 
 
 ```
@@ -49,7 +49,7 @@ LiAppro_HC(q=mhcstat,K=length(pset))
 mst(q=mhcstat,K=length(pset),k0=1,k1=length(pset),thre=T)
 
 ```
-* Untra-fast interpolation method: `HCp::ufi.p()` to calcaulte p-value and `HCp::ufi.q()` to find quantile 
+* Untra-fast interpolation method: `HCp::ufi.p()` to calcaulte p-value and `HCp::ufi.q()` to find quantile (This ultra-fast method is only for K no larger than 2000, otherwise please use function hybridSpec().)
 Example: 
 
 ```
