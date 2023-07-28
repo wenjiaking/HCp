@@ -1,6 +1,6 @@
 # HCp R package
 
-The R package "HCp" including functions of different methods for p-value computation of Higher Criticism test. The source code is under "master" branch.
+The R package "HCp" includes functions of different methods for p-value computation of Higher Criticism test. The source code is under "master" branch.
 
 ## Install the pacakge
 
@@ -10,9 +10,9 @@ The R package "HCp" including functions of different methods for p-value computa
 
 ## Brief Description
 
-The package provide functions for implementation of different methods for p-value computation of Higher Criticism test
+The package provides functions for the implementation of different methods for p-value computation of Higher Criticism test
 
-* Barnett and Lin's method: `HCp::XH()`
+* Barnett and Lin's method: `HCp::XH()`.
  
 Example: 
 
@@ -22,7 +22,8 @@ hcstat <-HCstat(pset,k0=1,k1=length(pset),thre=F)
 XH(q=hcstat,K=50)
 
 ```
-* Modified SetTest method: `HCp::mst()` 
+* Modified SetTest method: `HCp::mst()`. Modified SetTest for HC of thresholding domain (i.e. thre=TRUE) is reliable for low or moderately large dimension (K<120).
+  
 Example: 
 
 ```
@@ -31,7 +32,8 @@ mst(q=hcstat,K=50,k0=1,k1=50,thre=F)
 mst(q=mhcstat,K=50,k0=1,k1=50,thre=T)
 
 ```
-* Cross-entropy-based importance sampling method: `HCp::CE.mixed.grad()` and `HCp::CE.mixed.prop()` 
+* Cross-entropy-based importance sampling method: `HCp::CE.mixed.grad()` and `HCp::CE.mixed.prop()`.
+
 Example: 
 
 ```
@@ -39,7 +41,8 @@ CE.mixed.grad(q=hcstat,K=50,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=50,thre=F,idx=1
 CE.mixed.prop(q=mhcstat,K=50,ro=0.01,N0=10^4, N1=10^4,B=1,k0=1,k1=50,thre=T,prop=0.2,theta=1)
 
 ```
-* Li and Siegmund's method: `HCp::LiAppro_HC()` 
+* Li and Siegmund's method: `HCp::LiAppro_HC()`. Li-Siegmund approximation method is only reliable for small p-value computing (< 0.01).
+
 Example: 
 
 ```
@@ -49,7 +52,8 @@ LiAppro_HC(q=mhcstat,K=length(pset))
 mst(q=mhcstat,K=length(pset),k0=1,k1=length(pset),thre=T)
 
 ```
-* Untra-fast interpolation method: `HCp::ufi.p()` to calcaulte p-value and `HCp::ufi.q()` to find quantile 
+* Untra-fast interpolation method: `HCp::ufi.p()` to calcaulte p-value and `HCp::ufi.q()` to find quantile. This ultra-fast method is only for K no larger than 2000, otherwise please use function hybridSpec().
+  
 Example: 
 
 ```
@@ -61,9 +65,10 @@ ufi.p(flibs=HC_flibs,K=10:15,q=q)
 ufi.q(flibs_q=HC_flibs_q,K=10:15,p=10^(seq(-3,-8)))
 
 ```
-* Hybrid computing strategy: `HCp::hybrid()` and `HCp::hybridSpec()`
+* Hybrid computing strategy: `HCp::hybrid()` and `HCp::hybridSpec()`.
 
 `HCp::hybrid()`: Hybrid method of computing p-value for HC of arbitrary variation
+
 `HCp::hybridSpec()`: Hybrid method of computing p-value for HC of four popular variations
 
 Example: 
