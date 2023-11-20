@@ -24,7 +24,9 @@ hybrid=function(q,K, k0=1, k1=NA, thre=FALSE,N=10^6) {
       return(mst(q=q, K=K, k0=k0, k1=k1, thre=thre))
     }
     else {
-      pest=ufi.p(flibs=MHC_flibs,K=K,q=q)
+      if (K<=2000) {pest=ufi.p(flibs=MHC_flibs,K=K,q=q)}
+      else {pest=ufi.p(flibs=MHC_flibs,K=2000,q=q)}
+
       if (pest<10^(-3)) {
         return(LiAppro_HC(q=q,K=K, k0=k0, k1=k1, thre=thre))
       }
